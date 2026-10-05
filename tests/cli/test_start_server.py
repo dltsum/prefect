@@ -514,7 +514,12 @@ class TestPrestartCheck:
                 sys.stdin.seek(position)
             return sys.stdin.read(1)
 
-        monkeypatch.setattr("readchar._posix_read.readchar", readchar)
+        monkeypatch.setattr(
+            # `readchar` reads via a platform-specific submodule; patch the
+            # one that is actually importable on this platform.
+            f"readchar.{'_win_read' if sys.platform == 'win32' else '_posix_read'}.readchar",
+            readchar,
+        )
 
     @pytest.fixture(autouse=True)
     def temporary_profiles_path(self, tmp_path: Path):

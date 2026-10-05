@@ -1733,6 +1733,9 @@ class TestSettingsSources:
 
         assert Settings().api.url == "http://from-dotenv:4200/api"
 
+    @pytest.mark.skipif(
+        sys.platform == "win32", reason="os.mkfifo is not available on Windows"
+    )
     def test_env_fifo_does_not_hang(
         self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
     ):

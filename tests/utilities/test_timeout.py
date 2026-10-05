@@ -1,4 +1,5 @@
 import asyncio
+import sys
 import time
 
 import pytest
@@ -9,6 +10,10 @@ from prefect.utilities.timeout import timeout, timeout_async
 class CustomTimeoutError(TimeoutError): ...
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="synchronous cancellation is not supported on Windows (NullCancelScope)",
+)
 def test_timeout_raises_custom_error_type_sync():
     with pytest.raises(CustomTimeoutError):
         with timeout(seconds=0.1, timeout_exc_type=CustomTimeoutError):
