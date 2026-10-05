@@ -1,4 +1,5 @@
 import asyncio
+import sys
 import time
 from unittest import mock
 from uuid import UUID, uuid4
@@ -74,6 +75,10 @@ async def test_concurrency_context_cleanup_continues_after_release_failure(
     assert ConcurrencyContext.get() is None
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="synchronous cancellation is not supported on Windows (NullCancelScope)",
+)
 async def test_concurrency_context_releases_slots_sync(
     concurrency_limit: ConcurrencyLimitV2, prefect_client: PrefectClient
 ):
