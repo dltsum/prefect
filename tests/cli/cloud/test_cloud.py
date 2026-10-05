@@ -464,8 +464,10 @@ def test_login_with_interactive_key_multiple_workspaces(respx_mock: respx.MockRo
             readchar.key.DOWN
             + readchar.key.ENTER
             # Send a key
+            # NB: the key prompt is line-based (`Prompt.ask`), so it needs a
+            # newline terminator; `readchar.key.ENTER` is "\r" on Windows.
             + "foo"
-            + readchar.key.ENTER
+            + "\n"
             # Select the second workspace
             + readchar.key.DOWN
             + readchar.key.ENTER
@@ -664,11 +666,13 @@ def test_login_already_logged_in_to_current_profile_no_reauth_new_workspace(
             expected_code=0,
             user_input=(
                 # No, do not reuath
+                # NB: confirm/key prompts are line-based, so they need a
+                # newline terminator; `readchar.key.ENTER` is "\r" on Windows.
                 "n"
-                + readchar.key.ENTER
+                + "\n"
                 # Yes, switch workspaces
                 + "y"
-                + readchar.key.ENTER
+                + "\n"
                 # Select 'bar'
                 + readchar.key.DOWN
                 + readchar.key.ENTER
@@ -725,14 +729,16 @@ def test_login_already_logged_in_to_current_profile_yes_reauth(
             expected_code=0,
             user_input=(
                 # Yes, reauth
+                # NB: confirm/key prompts are line-based, so they need a
+                # newline terminator; `readchar.key.ENTER` is "\r" on Windows.
                 "y"
-                + readchar.key.ENTER
+                + "\n"
                 # Enter key manually
                 + readchar.key.DOWN
                 + readchar.key.ENTER
                 # Enter new key
                 + "bar"
-                + readchar.key.ENTER
+                + "\n"
             ),
             expected_output_contains=[
                 "Would you like to reauthenticate?",
@@ -792,13 +798,15 @@ def test_login_already_logged_in_with_invalid_api_url_prompts_workspace_change(
             expected_code=0,
             user_input=(
                 # Yes, reauth
+                # NB: confirm/key prompts are line-based, so they need a
+                # newline terminator; `readchar.key.ENTER` is "\r" on Windows.
                 "y"
-                + readchar.key.ENTER
+                + "\n"
                 # Enter a key
                 + readchar.key.DOWN
                 + readchar.key.ENTER
                 + "bar"
-                + readchar.key.ENTER
+                + "\n"
                 # Select the first workspace
                 + readchar.key.ENTER
             ),
@@ -852,8 +860,10 @@ def test_login_already_logged_in_to_another_profile(respx_mock: respx.MockRouter
         expected_code=0,
         user_input=(
             # Yes, switch profiles
+            # NB: confirm prompts are line-based, so they need a newline
+            # terminator; `readchar.key.ENTER` is "\r" on Windows.
             "y"
-            + readchar.key.ENTER
+            + "\n"
             # Use the first profile
             + readchar.key.ENTER
         ),
@@ -914,8 +924,10 @@ def test_login_already_logged_in_to_another_profile_cancel_during_select(
         expected_code=130,  # assumes typer>=0.13.0
         user_input=(
             # Yes, switch profiles
+            # NB: confirm prompts are line-based, so they need a newline
+            # terminator; `readchar.key.ENTER` is "\r" on Windows.
             "y"
-            + readchar.key.ENTER
+            + "\n"
             # Abort!
             + readchar.key.CTRL_C
         ),
@@ -1396,8 +1408,10 @@ def test_login_with_go_back_to_account_selection(respx_mock: respx.MockRouter):
             readchar.key.DOWN
             + readchar.key.ENTER
             # Send a key
+            # NB: the key prompt is line-based (`Prompt.ask`), so it needs a
+            # newline terminator; `readchar.key.ENTER` is "\r" on Windows.
             + "foo"
-            + readchar.key.ENTER
+            + "\n"
             # First select account1
             + readchar.key.ENTER
             # Then select "Go back to account selection" option (last option) - using UP once
