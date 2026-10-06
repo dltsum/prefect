@@ -82,7 +82,7 @@ async def find_prefect_decorated_functions_in_file(
                         {
                             decorator_name_key: node.name,
                             "function_name": node.name,
-                            "filepath": str(path),
+                            "filepath": path.as_posix(),
                         }
                     )
                 if is_func_name_match or is_module_attribute_func_match:
@@ -103,7 +103,7 @@ async def find_prefect_decorated_functions_in_file(
                         {
                             decorator_name_key: decorated_fn_name,
                             "function_name": node.name,
-                            "filepath": str(path),
+                            "filepath": path.as_posix(),
                         }
                     )
     return decorated_functions
