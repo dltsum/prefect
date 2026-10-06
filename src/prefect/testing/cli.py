@@ -40,6 +40,25 @@ class _TTYStringIO(io.StringIO):
         return True
 
 
+class _UniversalNewlineStdin(io.StringIO):
+    """A StringIO whose readline() also terminates at "\\r".
+
+    Real stdin is a text stream in universal-newlines mode, so on Windows a
+    line-based prompt (rich ``Prompt.ask``/``Confirm.ask``, ``getpass``)
+    returns when the user presses Enter. A plain StringIO only splits lines
+    on "\\n", which makes those prompts read to EOF in tests that feed
+    ``readchar.key.ENTER`` ("\\r" on Windows) as the line terminator.
+    """
+
+    def readline(self, size: int = -1) -> str:
+        line = super().readline(size)
+        if "\r" in line:
+            end = line.index("\r") + 1
+            self.seek(self.tell() - (len(line) - end))
+            line = line[:end].replace("\r", "\n")
+        return line
+
+
 class CycloptsResult:
     """Result of a cyclopts CLI invocation.
 
@@ -145,7 +164,7 @@ class CycloptsCliRunner:
             sys.stdout = stdout_buf  # type: ignore[assignment]
             sys.stderr = stderr_buf  # type: ignore[assignment]
             if input is not None:
-                sys.stdin = io.StringIO(input)  # type: ignore[assignment]
+                sys.stdin = _UniversalNewlineStdin(input)  # type: ignore[assignment]
             else:
                 sys.stdin = io.StringIO()  # type: ignore[assignment]
             # Wide terminal prevents Rich from wrapping long lines, which
