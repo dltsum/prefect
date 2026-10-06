@@ -3384,6 +3384,10 @@ class TestSchedules:
         assert deployment.schedules == []
 
     @pytest.mark.usefixtures("project_dir")
+    @pytest.mark.skipif(
+        sys.platform == "win32",
+        reason="the shell script step uses POSIX shell quoting (echo 'false')",
+    )
     async def test_yaml_with_shell_script_step_to_determine_schedule_is_active(
         self, prefect_client: PrefectClient, work_pool: WorkPool
     ):
